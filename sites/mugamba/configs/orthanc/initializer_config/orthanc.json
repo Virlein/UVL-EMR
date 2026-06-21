@@ -51,9 +51,6 @@
       "/auth/",
       "/ohif/",
       "/ui/"
-    ],
-    "UncheckedResources": [
-      "/dicom-web"
     ]
   },
   "DicomModalities": {
@@ -82,5 +79,9 @@
     "DataSource": "dicom-web",
     "RouterBasename": "/ohif",
     "UserConfiguration": "/usr/share/orthanc/ohif/app-config.js"
-  }
+  },
+  "HttpAllowOrigin": "*",
+  "HttpAllowCredentials": false,
+  "HttpAllowMethods": "GET, POST, PUT, DELETE, OPTIONS",
+  "HttpAllowHeaders": "Authorization, Content-Type, Accept, token"
 }

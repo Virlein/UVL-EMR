@@ -30,6 +30,7 @@ services:
       - ${KEYCLOAK_CONFIG_PATH}/themes/carbon:/opt/keycloak/themes/carbon
     environment:
       KC_HOSTNAME_ADMIN_URL: ${SERVER_SCHEME}://${KEYCLOAK_HOSTNAME}
+      KC_HOSTNAME: localhost:8084
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
       KC_PROXY_HEADERS: forwarded
@@ -56,7 +57,7 @@ services:
     environment:
       ENABLE_KEYCLOAK: "true"
       PERMISSIONS_FILE_PATH: "/orthanc-auth-service/permissions.json"
-      KEYCLOAK_URI: "http://keycloak:8080/realms/ozone/"
+      KEYCLOAK_URI: "http://localhost:8084/realms/ozone/"
       KEYCLOAK_CLIENT_ID: "orthanc"
       KEYCLOAK_ADMIN_URI: "http://keycloak:8080/admin/realms/ozone/"
       PUBLIC_ORTHANC_ROOT: "http://localhost:8889/"
@@ -125,6 +126,20 @@ services:
       - "${OPENMRS_FRONTEND_BINARY_PATH}:/usr/share/nginx/html"
       - "${OPENMRS_FRONTEND_CONFIG_PATH}:/usr/share/nginx/html/configs"
       - "${ORTHANC_ATTACHMENTS_PATCH_PATH}:/usr/share/nginx/html/openmrs-esm-patient-attachments-app-11.3.0"
+
+  ohif:
+    image: ohif/app:latest
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    networks:
+      ozone:
+        aliases:
+          - ohif
+    volumes:
+      - "${ORTHANC_CONFIG_PATH}/../ohif-standalone-config.js:/usr/share/nginx/html/app-config.js"
+
 
 volumes:
   orthanc-postgres-db:
