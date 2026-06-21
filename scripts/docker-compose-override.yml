@@ -30,7 +30,7 @@ services:
       - ${KEYCLOAK_CONFIG_PATH}/themes/carbon:/opt/keycloak/themes/carbon
     environment:
       KC_HOSTNAME_ADMIN_URL: ${SERVER_SCHEME}://${KEYCLOAK_HOSTNAME}
-      KC_HOSTNAME: localhost:8084
+      KC_HOSTNAME_URL: http://localhost:8084
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
       KC_PROXY_HEADERS: forwarded
@@ -57,7 +57,7 @@ services:
     environment:
       ENABLE_KEYCLOAK: "true"
       PERMISSIONS_FILE_PATH: "/orthanc-auth-service/permissions.json"
-      KEYCLOAK_URI: "http://localhost:8084/realms/ozone/"
+      KEYCLOAK_URI: "http://keycloak:8080/realms/ozone/"
       KEYCLOAK_CLIENT_ID: "orthanc"
       KEYCLOAK_ADMIN_URI: "http://keycloak:8080/admin/realms/ozone/"
       PUBLIC_ORTHANC_ROOT: "http://localhost:8889/"

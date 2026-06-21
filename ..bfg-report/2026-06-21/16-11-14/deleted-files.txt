@@ -1,0 +1,3 @@
+b4c2ac41d184c0817a93e5edb9a096901f6433a5 60427976 eip-odoo-openmrs-madiro-2.1.0.jar
+dd7a3acab539d595679c3a4a22a3ee123fcba53d 254145664 eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar
+cb28b0e37c7d206feb564310fdeec0927af4123a 62547 maven-wrapper.jar
