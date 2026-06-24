@@ -83,5 +83,10 @@
   "HttpAllowOrigin": "*",
   "HttpAllowCredentials": false,
   "HttpAllowMethods": "GET, POST, PUT, DELETE, OPTIONS",
-  "HttpAllowHeaders": "Authorization, Content-Type, Accept, token"
+  "HttpAllowHeaders": "Authorization, Content-Type, Accept, token",
+  "ImagingWorklistURL": "http://openmrs:8080/openmrs/ws/rest/v1/worklist/requests",
+  "ImagingUpdateRequestStatus": "http://openmrs:8080/openmrs/ws/rest/v1/worklist/updaterequeststatus",
+  "ImagingWorklistUsername": "admin",
+  "ImagingWorklistPassword": "Admin123",
+  "PythonScript": "/etc/orthanc/orthancWorklist.py"
 }

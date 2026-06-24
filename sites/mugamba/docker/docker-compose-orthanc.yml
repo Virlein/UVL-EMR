@@ -16,9 +16,11 @@ services:
       - OHIF_PLUGIN_ENABLED=true
       - DICOM_WEB_PLUGIN_ENABLED=true
       - POSTGRESQL_PLUGIN_ENABLED=true
+      - PYTHON_PLUGIN_ENABLED=true
     volumes:
       - orthanc-db:/var/lib/orthanc/db
       - "${ORTHANC_CONFIG_PATH}/ohif:/usr/share/orthanc/ohif"
+      - "${ORTHANC_CONFIG_PATH}/orthancWorklist.py:/etc/orthanc/orthancWorklist.py"
     networks:
       web:
       ozone:
@@ -30,7 +32,6 @@ services:
     depends_on:
       postgres-orthanc:
         condition: service_healthy
-
   postgres-orthanc:
     image: postgres:16
     restart: always
@@ -49,7 +50,6 @@ services:
       ozone:
         aliases:
           - postgres-orthanc
-
   eip-openmrs-orthanc:
     depends_on:
       openmrs:
@@ -94,7 +94,6 @@ services:
     volumes:
       - "${EIP_OPENMRS_ORTHANC_ROUTES_PATH}:/eip-client/routes"
       - eip-home-orthanc:/eip-home
-
   mysql:
     environment:
       EIP_DB_NAME_ORTHANC: ${EIP_DB_NAME_ORTHANC}
@@ -102,16 +101,14 @@ services:
       EIP_DB_PASSWORD_ORTHANC: ${EIP_DB_PASSWORD_ORTHANC}
     volumes:
       - "${SQL_SCRIPTS_PATH}/mysql/eip-openmrs-orthanc:/docker-entrypoint-initdb.d/db/eip-openmrs-orthanc"
-  
+
   env-substitution:
     environment:
       - PACS_PUBLIC_URL=${PACS_PUBLIC_URL}
-
 secrets:
   orthanc.json:
     file: ${ORTHANC_CONFIG_PATH}/orthanc.json
-
 volumes:
   orthanc-db:
   orthanc-postgres-db:
-  eip-home-orthanc: ~
+  eip-home-orthanc:
