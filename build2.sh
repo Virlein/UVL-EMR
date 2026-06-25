@@ -68,3 +68,22 @@ echo "=== Post-build: Copy orthancWorklist.py ==="
 cp /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/configs/orthanc/initializer_config/orthancWorklist.py \
    /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/initializer_config/orthancWorklist.py
 echo "→ orthancWorklist.py copied"
+
+echo "=== Post-build: Create start-uvl.sh wrapper ==="
+SCRIPTS_DIR="$(pwd)/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/run/docker/scripts"
+cat > "$SCRIPTS_DIR/start-uvl.sh" << 'WRAPPER'
+#!/bin/bash
+# UVL-EMR start wrapper - runs start.sh then post-start.sh
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "=== Starting UVL-EMR ==="
+bash "$SCRIPT_DIR/start.sh" "$@"
+
+echo ""
+echo "=== Running post-start setup ==="
+bash /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/scripts/post-start.sh
+WRAPPER
+chmod +x "$SCRIPTS_DIR/start-uvl.sh"
+echo "→ start-uvl.sh created"
+echo "→ Use: bash start-uvl.sh instead of bash start.sh"
