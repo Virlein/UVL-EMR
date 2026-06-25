@@ -58,3 +58,13 @@ echo "  bash start.sh"
 # Copy new EIP jar to distro after build
 cp /Users/v.ameil/Developer/eip-openmrs-orthanc-v2/target/eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar \
    /Users/v.ameil/Developer/UVL-EMR/distro/binaries/eip-openmrs-orthanc/
+
+echo ""
+echo "=== Post-build: Deploy imaging ESM ==="
+bash /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/scripts/deploy-imaging-esm.sh \
+  "$(pwd)/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT"
+echo ""
+echo "=== Post-build: Copy orthancWorklist.py ==="
+cp /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/configs/orthanc/initializer_config/orthancWorklist.py \
+   /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/initializer_config/orthancWorklist.py
+echo "→ orthancWorklist.py copied"
