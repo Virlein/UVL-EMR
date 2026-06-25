@@ -14,12 +14,14 @@ def make_request(url, method='GET', data=None, username=None, password=None):
         req.data = json.dumps(data).encode()
     try:
         with urllib.request.urlopen(req, timeout=10) as response:
-            return json.loads(response.read().decode())
+            result = response.read().decode()
+            orthanc.LogWarning(f'HTTP {method} {url} -> {response.status}: {result[:200]}')
+            return json.loads(result)
     except urllib.error.HTTPError as e:
-        orthanc.LogError(f'HTTP error {e.code}: {e.reason}')
+        orthanc.LogError(f'HTTP error {e.code} on {url}: {e.reason}')
         raise
     except Exception as e:
-        orthanc.LogError(f'Request error: {str(e)}')
+        orthanc.LogError(f'Request error on {url}: {str(e)}')
         raise
 
 def OnWorkList(answers, query, issuerAet, calledAet):
@@ -30,7 +32,7 @@ def OnWorkList(answers, query, issuerAet, calledAet):
 
     try:
         responseJson = make_request(getWorklistURL, username=worklistUsername, password=worklistPassword)
-        orthanc.LogWarning('Response by server: %s' % json.dumps(responseJson))
+        orthanc.LogWarning('Worklist response count: %d' % len(responseJson))
 
         for dicomJson in responseJson:
             responseDicom = orthanc.CreateDicom(json.dumps(dicomJson), None, orthanc.CreateDicomFlags.NONE)
@@ -105,8 +107,11 @@ def OnChange(changeType, level, resource):
                 'seriesList': allSeries
             }
             orthanc.LogWarning('Payload sent: ' + json.dumps(payload, indent=2))
-            make_request(updateRequestStatusURL, method='POST', data=payload,
+            result = make_request(updateRequestStatusURL, method='POST', data=payload,
                         username=worklistUsername, password=worklistPassword)
+            orthanc.LogWarning('Update result: ' + json.dumps(result)[:200])
+        else:
+            orthanc.LogWarning('No scheduledProcedureStepID found in study, skipping update')
 
     except Exception as e:
         orthanc.LogError('Failed to process stable study: ' + str(e))
