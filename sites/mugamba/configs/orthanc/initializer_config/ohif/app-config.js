@@ -15,7 +15,7 @@ window.config = {
   },
   oidc: [
     {
-      authority: "http://localhost/auth/realms/ozone",
+      authority: "http://localhost:8084/realms/ozone",
       client_id: "orthanc",
       redirect_uri: "http://localhost:8889/ohif/callback",
       response_type: "code",
@@ -35,6 +35,7 @@ window.config = {
         wadoUriRoot: "http://localhost:8889/wado",
         qidoRoot: "http://localhost:8889/dicom-web",
         wadoRoot: "http://localhost:8889/dicom-web",
+        stowRoot: "http://localhost:8889/dicom-web",
         qidoSupportsIncludeField: true,
         supportsReject: false,
         imageRendering: "wadors",
