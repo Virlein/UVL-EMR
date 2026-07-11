@@ -8,6 +8,14 @@ PROJECT_NAME="ozone-uvl-mugamba"
 
 echo "=== UVL-EMR Post-Start Setup ==="
 
+# Fix OpenMRS data directory permissions
+echo "=== Fixing OpenMRS data permissions ==="
+OPENMRS_IMAGE=$(docker inspect ozone-uvl-mugamba-openmrs-1 --format "{{.Config.Image}}" 2>/dev/null)
+if [ -n "$OPENMRS_IMAGE" ]; then
+  docker run --rm     -v ozone-uvl-mugamba_openmrs-data:/openmrs/data     --entrypoint sh     $OPENMRS_IMAGE     -c "chmod -R 777 /openmrs/data/modules/ 2>/dev/null; echo Done" || true
+  echo "→ Permissions fixed"
+fi
+
 # Helper: run MySQL command
 mysql_exec() {
   local sql="$1"
