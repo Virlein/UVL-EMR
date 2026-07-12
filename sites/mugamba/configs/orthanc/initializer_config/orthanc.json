@@ -95,5 +95,9 @@
   "ImagingWorklistPassword": "Admin123",
   "PythonScript": "/etc/orthanc/orthancWorklist.py",
   "DicomAlwaysAllowFind": true,
-  "UnknownSopClassAccepted": true
+  "UnknownSopClassAccepted": true,
+  "Worklists": {
+    "Enable": true,
+    "Database": "/var/lib/orthanc/worklists"
+  }
 }

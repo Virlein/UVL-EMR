@@ -17,6 +17,7 @@ services:
       - DICOM_WEB_PLUGIN_ENABLED=true
       - POSTGRESQL_PLUGIN_ENABLED=true
       - PYTHON_PLUGIN_ENABLED=true
+      - WORKLISTS_PLUGIN_ENABLED=true
     volumes:
       - orthanc-db:/var/lib/orthanc/db
       - "${ORTHANC_CONFIG_PATH}/ohif:/usr/share/orthanc/ohif"
@@ -85,6 +86,10 @@ services:
       - OAUTH_ACCESS_TOKEN_URL=http://keycloak:8080/realms/ozone/protocol/openid-connect/token
       - OAUTH_CLIENT_ID=orthanc-service
       - OAUTH_CLIENT_SECRET=${ORTHANC_CLIENT_SECRET}
+      - ODOO_URL=http://odoo:8069
+      - ODOO_DATABASE=${ODOO_DATABASE}
+      - ODOO_USER=${ODOO_USER}
+      - ODOO_PASSWORD=${ODOO_PASSWORD}
 
     image: mekomsolutions/eip-client:2.2.0
     networks:

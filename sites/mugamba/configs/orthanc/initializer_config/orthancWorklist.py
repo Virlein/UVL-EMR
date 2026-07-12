@@ -24,12 +24,6 @@ def make_request(url, method='GET', data=None, username=None, password=None):
         orthanc.LogError(f'Request error on {url}: {str(e)}')
         raise
 
-def OnWorkList(answers, query, issuerAet, calledAet):
-    queryDicom = query.WorklistGetDicomQuery()
-    queryJson = json.loads(orthanc.DicomBufferToJson(
-        queryDicom, orthanc.DicomToJsonFormat.SHORT, orthanc.DicomToJsonFlags.NONE, 0))
-    orthanc.LogWarning('C-FIND worklist request: %s' % json.dumps(queryJson, indent=4))
-
     try:
         responseJson = make_request(getWorklistURL, username=worklistUsername, password=worklistPassword)
         orthanc.LogWarning('Worklist response count: %d' % len(responseJson))
@@ -121,7 +115,6 @@ def getConfigItem(configItemName):
     configJson = json.loads(config)
     return configJson[configItemName]
 
-orthanc.RegisterWorklistCallback(OnWorkList)
 orthanc.RegisterOnChangeCallback(OnChange)
 
 getWorklistURL = getConfigItem('ImagingWorklistURL')
