@@ -8,6 +8,10 @@ PROJECT_NAME="ozone-uvl-mugamba"
 
 echo "=== UVL-EMR Post-Start Setup ==="
 
+# Fix Orthanc worklists folder permissions
+echo "=== Fixing Orthanc worklists folder ==="
+docker exec ozone-uvl-mugamba-orthanc-1 sh -c   "mkdir -p /var/lib/orthanc/worklists && chmod 777 /var/lib/orthanc/worklists && echo Done" || true
+
 # Fix OpenMRS data directory permissions
 echo "=== Fixing OpenMRS data permissions ==="
 OPENMRS_IMAGE=$(docker inspect ozone-uvl-mugamba-openmrs-1 --format "{{.Config.Image}}" 2>/dev/null)

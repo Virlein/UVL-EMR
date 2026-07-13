@@ -35,6 +35,27 @@ def make_request(url, method='GET', data=None, username=None, password=None):
     except Exception as e:
         orthanc.LogError('Failed to get worklist: ' + str(e))
 
+def delete_worklist_by_accession(accession_number):
+    """Delete Orthanc worklist entry matching the accession number."""
+    try:
+        response = orthanc.RestApiGet('/worklists')
+        worklist_ids = json.loads(response)
+        for wl_id in worklist_ids:
+            try:
+                wl_data = json.loads(orthanc.RestApiGet('/worklists/' + wl_id))
+                tags = wl_data.get('Tags', {})
+                if tags.get('AccessionNumber') == accession_number:
+                    orthanc.RestApiDelete('/worklists/' + wl_id)
+                    orthanc.LogWarning('Deleted worklist entry {} for accession {}'.format(
+                        wl_id, accession_number))
+                    return True
+            except Exception as e:
+                orthanc.LogWarning('Error checking worklist {}: {}'.format(wl_id, str(e)))
+    except Exception as e:
+        orthanc.LogWarning('Error deleting worklist: {}'.format(str(e)))
+    return False
+
+
 def OnChange(changeType, level, resource):
     if changeType != orthanc.ChangeType.STABLE_STUDY:
         return
