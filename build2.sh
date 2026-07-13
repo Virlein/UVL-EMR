@@ -8,6 +8,9 @@ sudo rm -rf sites/mugamba/target
 mvn clean package --no-transfer-progress "$@"
 
 # Ensure latest jar is in mugamba target (Maven may have cached the old one)
+# Copy latest EIP jar from source first, then to target
+cp /Users/v.ameil/Developer/eip-openmrs-orthanc-v2/target/eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar \
+   /Users/v.ameil/Developer/UVL-EMR/distro/binaries/eip-openmrs-orthanc/
 cp /Users/v.ameil/Developer/UVL-EMR/distro/binaries/eip-openmrs-orthanc/eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar \
    /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/binaries/eip-openmrs-orthanc/
 
@@ -55,9 +58,7 @@ echo ""
 echo "To start:"
 echo "  cd $(pwd)/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/run/docker/scripts"
 echo "  bash start.sh"
-# Copy new EIP jar to distro after build
-cp /Users/v.ameil/Developer/eip-openmrs-orthanc-v2/target/eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar \
-   /Users/v.ameil/Developer/UVL-EMR/distro/binaries/eip-openmrs-orthanc/
+
 
 echo ""
 echo "=== Post-build: Deploy imaging ESM ==="
