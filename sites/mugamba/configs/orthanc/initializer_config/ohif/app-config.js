@@ -1,7 +1,7 @@
 window.config = {
   extensions: [],
   modes: [],
-  showStudyList: true,
+  showStudyList: false,
   maxNumberOfWebWorkers: 3,
   omitQuotationForMultipartRequest: true,
   showWarningMessageForCrossOrigin: true,
@@ -48,7 +48,7 @@ window.config = {
         requestOptions: {
           requestFromBrowser: true,
           getAuthorizationHeader: function() {
-            const token = window.ohifToken;
+            const token = localStorage.getItem("vue-token");
             return token ? { Authorization: "Bearer " + token } : {};
           }
         }
