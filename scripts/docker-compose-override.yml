@@ -94,7 +94,7 @@ services:
           - postgres-orthanc
     
   eip-openmrs-orthanc-init:
-      image: eclipse-temurin:17-jre
+      image: mekomsolutions/eip-client:2.2.0
       entrypoint: ["sh", "-c", "cp /source/eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar /app/ && echo 'JAR copied successfully'"]
       volumes:
         - "${EIP_OPENMRS_ORTHANC_ROUTES_PATH}:/source"
@@ -103,7 +103,7 @@ services:
         ozone:
 
   eip-openmrs-orthanc:
-    image: eclipse-temurin:17-jre
+    image: mekomsolutions/eip-client:2.2.0
     entrypoint: ["java", "-jar", "/app/eip-openmrs-orthanc-1.0.0-SNAPSHOT.jar"]
     command: []
     volumes:
