@@ -1,6 +1,8 @@
 services:
   openmrs:
     image: openmrs/openmrs-core:2.7.6
+    environment:
+      ORTHANCTOKEN_KEYCLOAK_CLIENTSECRET: ${ORTHANC_CLIENT_SECRET}
     healthcheck:
       test:
         [
