@@ -70,6 +70,32 @@ cp /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/configs/orthanc/initializer_co
    /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/initializer_config/orthancWorklist.py
 echo "→ orthancWorklist.py copied"
 
+echo "=== Post-build: Fix oauth2.properties for SSO ==="
+OAUTH2_PROPS="/Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/openmrs/properties/oauth2.properties"
+if [ -f "$OAUTH2_PROPS" ]; then
+  # The distro template uses a single ${KEYCLOAK_URL} placeholder for every
+  # endpoint, substituted by env-substitution at container startup. But
+  # accessTokenUri/userInfoUri/keysUrl are called server-to-server from
+  # inside the openmrs container (needing the internal Docker hostname
+  # keycloak:8080), while userAuthorizationUri/logoutUri are followed by the
+  # user's actual browser (needing the externally-reachable localhost:8084) -
+  # a single variable cannot correctly serve both. Confirmed live: "localhost"
+  # inside the openmrs container does not reach the keycloak container at all.
+  # Fix: hardcode the internal hostname on just the three server-to-server
+  # lines at build time (before env-substitution ever runs), leaving the two
+  # browser-facing lines with their ${KEYCLOAK_URL} token intact for normal
+  # runtime substitution.
+  sed -i '' 's|^accessTokenUri=\${KEYCLOAK_URL}|accessTokenUri=http://keycloak:8080|' "$OAUTH2_PROPS"
+  sed -i '' 's|^userInfoUri=\${KEYCLOAK_URL}|userInfoUri=http://keycloak:8080|' "$OAUTH2_PROPS"
+  sed -i '' 's|^keysUrl=\${KEYCLOAK_URL}|keysUrl=http://keycloak:8080|' "$OAUTH2_PROPS"
+  # Keycloak does not return a "provider" field in userinfo - this mapping
+  # throws PathNotFoundException on every authenticated request if left in.
+  sed -i '' '/^openmrs.mapping.user.provider=provider$/d' "$OAUTH2_PROPS"
+  echo "→ oauth2.properties fixed for SSO"
+else
+  echo "→ WARNING: oauth2.properties not found - skipping SSO fix"
+fi
+
 echo "=== Post-build: Create start-uvl.sh wrapper ==="
 SCRIPTS_DIR="$(pwd)/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/run/docker/scripts"
 cat > "$SCRIPTS_DIR/start-uvl.sh" << 'WRAPPER'
