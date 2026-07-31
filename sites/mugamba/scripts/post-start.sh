@@ -118,6 +118,21 @@ echo "=== Deploying attachments ESM patch ==="
 cp -r /Users/v.ameil/Developer/openmrs-esm-patient-chart-upstream/packages/esm-patient-attachments-app/dist/* \
    /Users/v.ameil/Developer/UVL-EMR/openmrs-esm-patient-chart/packages/esm-patient-attachments-app/dist/ 2>/dev/null || true
 
+# 9. SSO login support - OpenMRS-side role/privilege grants
+# (idempotent - safe on an existing user too)
+echo "=== Ensuring SSO-related OpenMRS role/privilege grants ==="
+mysql_exec "
+  INSERT IGNORE INTO user_role (user_id, role)
+    SELECT user_id, 'System Developer' FROM users WHERE username='admin';
+  INSERT IGNORE INTO user_role (user_id, role)
+    SELECT user_id, 'Privilege Level: Full' FROM users WHERE username='admin';
+  INSERT IGNORE INTO user_role (user_id, role)
+    SELECT user_id, 'Doctor' FROM users WHERE username='admin';
+  INSERT IGNORE INTO role_privilege (role, privilege)
+    SELECT 'Privilege Level: Full', privilege FROM privilege;
+"
+echo "→ SSO role/privilege grants applied"
+
 echo ""
 echo "=== Post-start setup complete! ==="
 echo "→ OpenMRS O3: http://localhost/openmrs/spa"
