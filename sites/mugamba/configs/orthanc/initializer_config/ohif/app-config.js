@@ -15,12 +15,12 @@ window.config = {
   },
   oidc: [
     {
-      authority: "http://localhost:8084/realms/ozone",
+      authority: "${KEYCLOAK_URL}/realms/ozone",
       client_id: "orthanc",
-      redirect_uri: "http://localhost:8889/ohif/callback",
+      redirect_uri: "${PACS_PUBLIC_URL}/ohif/callback",
       response_type: "code",
       scope: "openid profile email roles",
-      post_logout_redirect_uri: "http://localhost:8889/ohif/",
+      post_logout_redirect_uri: "${PACS_PUBLIC_URL}/ohif/",
       automaticSilentRenew: true,
       revokeAccessTokenOnSignout: true,
     }
@@ -32,10 +32,10 @@ window.config = {
       configuration: {
         friendlyName: "Orthanc DICOMweb",
         name: "orthanc",
-        wadoUriRoot: "http://localhost:8889/wado",
-        qidoRoot: "http://localhost:8889/dicom-web",
-        wadoRoot: "http://localhost:8889/dicom-web",
-        stowRoot: "http://localhost:8889/dicom-web",
+        wadoUriRoot: "${PACS_PUBLIC_URL}/wado",
+        qidoRoot: "${PACS_PUBLIC_URL}/dicom-web",
+        wadoRoot: "${PACS_PUBLIC_URL}/dicom-web",
+        stowRoot: "${PACS_PUBLIC_URL}/dicom-web",
         qidoSupportsIncludeField: true,
         supportsReject: false,
         imageRendering: "wadors",

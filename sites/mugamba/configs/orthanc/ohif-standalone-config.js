@@ -15,7 +15,7 @@ window.config = {
   },
   oidc: [
     {
-      authority: "http://localhost:8084/realms/ozone",
+      authority: "${KEYCLOAK_URL}/realms/ozone",
       client_id: "orthanc",
       redirect_uri: "http://localhost:3000/callback",
       response_type: "code",
@@ -32,9 +32,9 @@ window.config = {
       configuration: {
         friendlyName: "Orthanc DICOMweb",
         name: "orthanc",
-        wadoUriRoot: "http://localhost/orthanc-cors/wado",
-        qidoRoot: "http://localhost/orthanc-cors/dicom-web",
-        wadoRoot: "http://localhost/orthanc-cors/dicom-web",
+        wadoUriRoot: "${OPENMRS_PUBLIC_URL}/orthanc-cors/wado",
+        qidoRoot: "${OPENMRS_PUBLIC_URL}/orthanc-cors/dicom-web",
+        wadoRoot: "${OPENMRS_PUBLIC_URL}/orthanc-cors/dicom-web",
         qidoSupportsIncludeField: true,
         supportsReject: false,
         imageRendering: "wadors",

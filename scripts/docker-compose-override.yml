@@ -32,7 +32,7 @@ services:
       - ${KEYCLOAK_CONFIG_PATH}/themes/carbon:/opt/keycloak/themes/carbon
     environment:
       KC_HOSTNAME_ADMIN_URL: ${SERVER_SCHEME}://${KEYCLOAK_HOSTNAME}
-      KC_HOSTNAME_URL: http://localhost:8084
+      KC_HOSTNAME_URL: ${SERVER_SCHEME}://${KEYCLOAK_HOSTNAME}
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
       KC_PROXY_HEADERS: forwarded

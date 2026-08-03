@@ -118,22 +118,65 @@ echo "=== Deploying attachments ESM patch ==="
 cp -r /Users/v.ameil/Developer/openmrs-esm-patient-chart-upstream/packages/esm-patient-attachments-app/dist/* \
    /Users/v.ameil/Developer/UVL-EMR/openmrs-esm-patient-chart/packages/esm-patient-attachments-app/dist/ 2>/dev/null || true
 
-# 9. SSO login support - OpenMRS-side role/privilege grants
-# (idempotent - safe on an existing user too)
-echo "=== Ensuring SSO-related OpenMRS role/privilege grants ==="
-mysql_exec "
-  INSERT IGNORE INTO user_role (user_id, role)
-    SELECT user_id, 'System Developer' FROM users WHERE username='admin';
-  INSERT IGNORE INTO user_role (user_id, role)
-    SELECT user_id, 'Privilege Level: Full' FROM users WHERE username='admin';
-  INSERT IGNORE INTO user_role (user_id, role)
-    SELECT user_id, 'Doctor' FROM users WHERE username='admin';
-  INSERT IGNORE INTO role_privilege (role, privilege)
-    SELECT 'Privilege Level: Full', privilege FROM privilege;
-"
-echo "→ SSO role/privilege grants applied"
-
 echo ""
+
+# 10. SSO: verify oauth2login module's web layer actually activated.
+# Confirmed via extensive live testing: this module's authentication-scheme
+# override can activate (rejecting Basic Auth) while its own web endpoint
+# still 404s - a genuine, nondeterministic race condition in OpenMRS's own
+# module web-layer registration during Tomcat startup. A plain restart
+# reliably resolves it, but the number of restarts needed varies. This
+# step only runs when SSO is actually enabled - a 404 here is normal and
+# expected when running without SSO.
+OAUTH2_PROPS_CHECK="$SCRIPT_DIR/../target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/openmrs/properties/oauth2.properties"
+if [ -f "$OAUTH2_PROPS_CHECK" ] && grep -q "^oauth2.enabled=true" "$OAUTH2_PROPS_CHECK"; then
+  echo "=== Verifying oauth2login module is genuinely active (SSO enabled) ==="
+  MAX_RETRIES=5
+  ATTEMPT=1
+  while [ $ATTEMPT -le $MAX_RETRIES ]; do
+    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/openmrs/oauth2login)
+    if [ "$STATUS" = "302" ]; then
+      echo "-> oauth2login active (attempt $ATTEMPT)"
+      break
+    fi
+    echo "-> oauth2login not yet active (status $STATUS, attempt $ATTEMPT/$MAX_RETRIES) - restarting openmrs"
+    docker restart ${PROJECT_NAME}-openmrs-1
+    echo "-> Waiting for OpenMRS to become ready again..."
+    sleep 90
+    until curl -sf http://localhost/openmrs/ws/rest/v1/ > /dev/null 2>&1 || curl -sf -o /dev/null -w "%{http_code}" http://localhost/openmrs/oauth2login | grep -q "302\|404"; do
+      sleep 10
+    done
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  if [ "$STATUS" != "302" ]; then
+    echo "-> WARNING: oauth2login still not active after $MAX_RETRIES attempts - manual check needed"
+  fi
+fi
+
+
+echo "=== Fixing OHIF config files (env-substitution doesn't process .js files) ==="
+CONCATENATED_ENV="$SCRIPT_DIR/../target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/run/docker/concatenated.env"
+if [ -f "$CONCATENATED_ENV" ]; then
+  KEYCLOAK_URL_VAL=$(grep "^KEYCLOAK_URL=" "$CONCATENATED_ENV" | head -1 | cut -d'=' -f2-)
+  PACS_PUBLIC_URL_VAL=$(grep "^PACS_PUBLIC_URL=" "$CONCATENATED_ENV" | head -1 | cut -d'=' -f2-)
+  OPENMRS_PUBLIC_URL_VAL=$(grep "^OPENMRS_PUBLIC_URL=" "$CONCATENATED_ENV" | head -1 | cut -d'=' -f2-)
+  OHIF_FILES=(
+    "$SCRIPT_DIR/../target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/ohif-config.js"
+    "$SCRIPT_DIR/../target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/ohif-standalone-config.js"
+    "$SCRIPT_DIR/../target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/initializer_config/ohif/app-config.js"
+  )
+  for f in "${OHIF_FILES[@]}"; do
+    if [ -f "$f" ]; then
+      sed -i '' "s|\${KEYCLOAK_URL}|$KEYCLOAK_URL_VAL|g" "$f"
+      sed -i '' "s|\${PACS_PUBLIC_URL}|$PACS_PUBLIC_URL_VAL|g" "$f"
+      sed -i '' "s|\${OPENMRS_PUBLIC_URL}|$OPENMRS_PUBLIC_URL_VAL|g" "$f"
+      echo "-> Fixed: $f"
+    fi
+  done
+else
+  echo "-> WARNING: concatenated.env not found - skipping OHIF config fix"
+fi
+
 echo "=== Post-start setup complete! ==="
 echo "→ OpenMRS O3: http://localhost/openmrs/spa"
 echo "→ Orthanc:    http://localhost:8889"

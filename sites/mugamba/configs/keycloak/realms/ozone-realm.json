@@ -85,6 +85,47 @@
         "clientRole": false,
         "containerId": "ozone",
         "attributes": {}
+      },
+      {
+        "name": "xray_technician",
+        "description": "Orthanc/OE2 access role - see permissions.json",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      },
+      {
+        "name": "System Developer",
+        "description": "Maps to OpenMRS System Developer role for SSO users",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      },
+      {
+        "name": "radiologist",
+        "description": "Orthanc/OE2 access role - see permissions.json",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      },
+      {
+        "name": "Doctor",
+        "description": "Maps to OpenMRS Doctor role for SSO users",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      },
+      {
+        "name": "admin",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      },
+      {
+        "name": "Privilege Level: Full",
+        "description": "Maps to OpenMRS Privilege Level: Full role for SSO users",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
       }
     ],
     "client": {
@@ -1141,19 +1182,19 @@
     {
       "id": "14b6083d-2d3c-4fb1-a75d-0f5af17be198",
       "clientId": "openmrs",
-      "rootUrl": "http://localhost/openmrs",
-      "adminUrl": "http://localhost/openmrs",
-      "baseUrl": "http://localhost/openmrs",
+      "rootUrl": "${OPENMRS_PUBLIC_URL}/openmrs",
+      "adminUrl": "${OPENMRS_PUBLIC_URL}/openmrs",
+      "baseUrl": "${OPENMRS_PUBLIC_URL}/openmrs",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "AYmNV4AEHA0Tlxwa",
       "redirectUris": [
-        "http://localhost/openmrs/*"
+        "${OPENMRS_PUBLIC_URL}/openmrs/*"
       ],
       "webOrigins": [
-        "http://localhost"
+        "${OPENMRS_PUBLIC_URL}"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1174,6 +1215,20 @@
             "multivalued": "true",
             "userinfo.token.claim": "true",
             "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "realm-roles-flat",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "roles",
@@ -1205,7 +1260,7 @@
         "saml.authnstatement": "false",
         "display.on.consent.screen": "false",
         "saml.onetimeuse.condition": "false",
-        "frontchannel.logout.url": "http://localhost/openmrs/oauth2logout"
+        "frontchannel.logout.url": "${OPENMRS_PUBLIC_URL}/openmrs/oauth2logout"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -1541,6 +1596,48 @@
       "protocolMappers": [],
       "defaultClientScopes": [
         "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "orthanc",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
         "roles",
         "profile",
         "email"
