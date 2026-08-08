@@ -64,11 +64,6 @@ echo ""
 echo "=== Post-build: Deploy imaging ESM ==="
 bash /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/scripts/deploy-imaging-esm.sh \
   "$(pwd)/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT"
-echo ""
-echo "=== Post-build: Copy orthancWorklist.py ==="
-cp /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/configs/orthanc/initializer_config/orthancWorklist.py \
-   /Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/orthanc/initializer_config/orthancWorklist.py
-echo "→ orthancWorklist.py copied"
 
 echo "=== Post-build: Fix oauth2.properties for SSO ==="
 OAUTH2_PROPS="/Users/v.ameil/Developer/UVL-EMR/sites/mugamba/target/ozone-uvl-mugamba-1.0.0-SNAPSHOT/distro/configs/openmrs/properties/oauth2.properties"

@@ -228,9 +228,6 @@
 
 
 
-<copy file="${project.basedir}/configs/orthanc/initializer_config/orthancWorklist.py"
-      tofile="${project.build.directory}/${project.artifactId}-${project.version}/distro/configs/orthanc/initializer_config/orthancWorklist.py"
-      overwrite="true" />
              
             
               </target>
